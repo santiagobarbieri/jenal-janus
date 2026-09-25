@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#062e27"><title>Jendal — Asistente de automatización</title><link rel="preload" href="Assets/fonts/AlbertSans.ttf" as="font" type="font/ttf" crossorigin><link rel="preload" href="Assets/fonts/CooperBT-Regular.ttf" as="font" type="font/ttf" crossorigin><link rel="stylesheet" href="styles.css"></head>
+<body>
+<div class="app">
+ <button id="menu" class="panel-toggle" aria-label="Abrir panel" aria-controls="sidebar" aria-expanded="false"><span></span><span></span></button>
+ <aside class="sidebar" id="sidebar" aria-label="Navegación principal">
+  <div class="brand"><img src="Assets/Jendal%20logo.svg" alt="Jendal"><span>Powered by Janus Automation</span></div>
+  <nav>
+   <button class="nav-row strong" id="new-session"><img src="Assets/Vector.svg" alt=""><span data-i18n="newSession">Nuevo chat</span></button>
+   <div class="nav-row strong language-heading" data-i18n="language">Idioma</div>
+   <div class="languages" aria-label="Idioma"><button data-lang="en">En</button><button data-lang="es" aria-pressed="true">Es</button><button data-lang="pt">Pt</button></div>
+   <button class="nav-row strong" id="documents"><img src="Assets/Vector-10.svg" alt=""><span data-i18n="pdfs">Mis PDF</span><span class="small-count" id="pdf-count"></span></button>
+   <button class="nav-row strong" id="history-toggle" aria-expanded="true"><img src="Assets/Vector-8.svg" alt=""><span data-i18n="history">Historial</span></button>
+  </nav>
+  <div class="history" id="history" aria-label="Sesiones"></div>
+  <div class="sidebar-footer"><button class="circle" id="settings" aria-label="Configuración" title="Configuración"><img src="Assets/Vector-4.svg" alt=""></button><span class="user-icon" role="img" aria-label="Usuario" title="Usuario"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2H4Z"/></svg></span><span class="prototype">DEMO · L2</span></div>
+ </aside>
+ <button class="scrim" id="scrim" aria-label="Cerrar menú" hidden></button>
+ <main>
+  <header class="conversation-header"><div class="heading"><h1 id="session-title">Qué podés hacer?</h1><div id="ticket-strip" class="ticket-strip" hidden></div></div><div class="session-meta"><time id="date"></time><span id="message-count"></span><button id="context-toggle" class="context-toggle" aria-expanded="false" title="Ver contexto del ticket" aria-label="Ver contexto del ticket">ⓘ</button></div></header>
+  <div class="work-area"><section class="chat" aria-label="Conversación"><div class="messages" id="messages" role="log" aria-live="polite"></div><div class="composer-wrap"><div class="connection-note" id="connection-note" hidden></div><form id="composer"><textarea id="prompt" rows="1" aria-label="Tu consulta" placeholder="Escribí tu consulta o grabá un audio..."></textarea><button type="button" id="microphone" class="icon-button" aria-label="Grabar consulta" title="Dictar consulta"><img src="Assets/Vector-9.svg" alt=""></button><button type="submit" id="send" class="icon-button" aria-label="Enviar consulta" title="Enviar consulta"><img src="Assets/Vector-2.svg" alt=""></button></form><div class="composer-caption"><span data-i18n="demo">Entorno de demostración · Sin conexión al agente Janus</span><span>ENTER ↵</span></div></div></section><aside class="context-panel" id="context-panel" aria-label="Contexto del ticket" hidden></aside></div>
+ </main>
+</div>
+<dialog id="modal"><div class="modal-header"><h2 id="modal-title"></h2><button class="icon-button" id="close-modal" aria-label="Cerrar">×</button></div><div id="modal-content"></div></dialog>
+<div id="toast" class="toast" role="status" hidden></div>
+<script src="welcome.js"></script>
+<script src="app.js"></script>
+</body></html>

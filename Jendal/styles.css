@@ -1,0 +1,199 @@
+@font-face{font-family:"Albert Sans";src:url("Assets/fonts/AlbertSans.ttf") format("truetype");font-style:normal;font-weight:100 900;font-display:swap}
+@font-face{font-family:"Cooper BT";src:url("Assets/fonts/CooperBT-Regular.ttf") format("truetype");font-style:normal;font-weight:400;font-display:swap}
+
+/* Fixed dark palette with a black navigation rail. */
+:root{
+ color-scheme:dark;
+ --green:#062e27;--neutral:#d9d9d9;--orange:#ff9f00;
+ --font-sans:"Albert Sans",sans-serif;--font-serif:"Cooper BT",serif;
+ --panel-width:clamp(285px,25.8vw,390px);--motion:260ms;--ease:cubic-bezier(.22,.7,.2,1);
+}
+body{
+ --bg:var(--green);--sidebar:#000000;
+ --text:var(--neutral);--inverse:var(--green);--card:var(--neutral);--card-text:var(--green);
+ --muted:color-mix(in srgb,var(--text) 72%,var(--bg));
+ --line:color-mix(in srgb,var(--text) 35%,var(--bg));
+ --selection-text:var(--green);--icon-filter:brightness(0) invert(.85);
+}
+*{box-sizing:border-box}
+html,body{height:100%;overflow:hidden;overscroll-behavior:none}
+body{margin:0;background:var(--bg);color:var(--text);font:18px var(--font-sans)}
+button,input,textarea,select{font:inherit}
+button{background:none;border:0;color:inherit;cursor:pointer;padding:0}
+button,a,input,textarea,select{-webkit-tap-highlight-color:transparent}
+button:disabled{opacity:.4;cursor:not-allowed}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid currentColor;outline-offset:4px}
+button img{width:26px;height:26px;object-fit:contain;flex-shrink:0}
+.brand img,button img{filter:var(--icon-filter)}
+[hidden]{display:none!important}
+.app{position:relative;display:flex;height:100dvh;overflow:hidden;background:var(--bg)}
+main{display:flex;flex:1;flex-direction:column;min-width:0;min-height:0}
+.app,.sidebar,.message,.context-panel,dialog{transition:background-color var(--motion),color var(--motion)}
+
+/* Navigation is grouped with space, not separator lines. */
+.sidebar{display:flex;flex-direction:column;flex-shrink:0;width:var(--panel-width);min-width:var(--panel-width);max-width:var(--panel-width);min-height:0;padding:76px 18px 36px;background:var(--sidebar);overflow:hidden;margin-left:calc(-1 * var(--panel-width));visibility:hidden;transform:translateX(-18px);transition:margin-left var(--motion) var(--ease),transform var(--motion) var(--ease),visibility var(--motion),background-color var(--motion)}
+.panel-open .sidebar{margin-left:0;visibility:visible;transform:translateX(0)}
+.brand{display:flex;align-items:center;justify-content:space-between;gap:18px;min-width:0;margin-bottom:42px;flex-shrink:0}
+.brand>img{display:block;width:40%;max-width:132px;height:auto}
+.brand>span{font-size:10px;line-height:1.3;max-width:130px;text-align:right;text-transform:uppercase}
+.sidebar nav{flex-shrink:0;overflow-y:auto;max-height:45dvh;scrollbar-width:thin;overscroll-behavior:contain}
+.nav-row{display:flex;align-items:center;gap:11px;width:100%;min-height:48px;padding:10px 16px;text-align:left}
+.strong{font-size:17px;font-weight:600}
+.language-heading{font-size:12px;font-weight:400;color:var(--muted);min-height:28px;margin-top:18px;padding-bottom:0}
+.languages{display:flex;gap:20px;padding:4px 16px 22px}
+.languages button{min-height:36px;min-width:32px;font-size:15px;color:var(--muted)}
+.languages button[aria-pressed=true]{color:var(--text);font-weight:600;text-decoration:underline;text-underline-offset:7px;text-decoration-thickness:1px}
+.nav-row img[src*="10"]{width:18px;margin-right:8px}
+.small-count{margin-left:auto;font-size:12px;color:var(--muted)}
+#history-toggle{margin-top:14px}
+.history{flex:1;min-height:40px;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;overscroll-behavior:contain;padding-top:8px}
+.history-item{display:block;width:100%;min-height:44px;padding:12px 16px;font-size:16px;color:var(--muted);text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:2px 0}
+.history-item.active{background:var(--orange);color:var(--selection-text)}
+.history-ticket{display:block;font-size:10px;letter-spacing:.02em;margin-top:6px}
+.sidebar-footer{display:flex;align-items:center;gap:6px;flex-shrink:0;margin:24px 8px 0}
+.circle{width:42px;height:42px;display:grid;place-items:center}
+.circle img{width:24px;height:24px}
+.user-icon{width:42px;height:42px;display:grid;place-items:center;flex-shrink:0;color:var(--text)}
+.prototype{font-size:10px;letter-spacing:.08em;color:var(--muted);margin-left:auto}
+.panel-toggle{position:absolute;top:22px;left:24px;z-index:7;width:36px;height:36px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.panel-toggle span{display:block;width:24px;height:1px;background:currentColor;transition:transform var(--motion) var(--ease)}
+.panel-toggle[aria-expanded=true] span:first-child{transform:translateY(3.5px) rotate(45deg)}
+.panel-toggle[aria-expanded=true] span:last-child{transform:translateY(-3.5px) rotate(-45deg)}
+
+/* Conversation: flat surfaces, orange reserved for the operator and selection. */
+.conversation-header{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;min-height:184px;padding:62px 24px 36px 32px;flex-shrink:0;transition:padding-left var(--motion) var(--ease)}
+.app:not(.panel-open) .conversation-header{padding-left:84px}
+.heading{min-width:0;overflow-wrap:anywhere}
+h1{font:400 clamp(34px,3.3vw,50px)/1.16 var(--font-serif);letter-spacing:-2.2px;margin:6px 0 0}
+.session-meta{display:flex;align-items:center;gap:28px;padding-top:27px;font-size:12px;white-space:nowrap;text-transform:uppercase}
+.context-toggle{font-size:20px;margin-left:-12px}
+.ticket-strip{margin-top:14px;font-size:11px;line-height:1.8;color:var(--muted)}
+.work-area{display:flex;flex:1;min-height:0}
+.chat{display:flex;flex:1;flex-direction:column;min-width:0;min-height:0;padding:0 24px}
+.messages{display:flex;flex:1;flex-direction:column;gap:18px;min-height:0;padding:0 0 32px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-width:thin}
+.message{flex-shrink:0;max-width:min(82%,720px);font-size:20px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
+.message.user{align-self:flex-end;background:var(--orange);color:var(--selection-text);padding:18px 30px;min-width:min(430px,80%)}
+.message.assistant{align-self:flex-start;background:var(--card);color:var(--card-text);padding:18px 32px;min-width:min(503px,88%)}
+.message.technical{font-size:15px;padding:24px 28px}
+.message-meta{display:block;font-size:10px;letter-spacing:.06em;margin-bottom:12px}
+.message p{margin:0}
+.message.technical strong{display:block;font-size:11px;letter-spacing:.09em;margin-bottom:10px}
+.message.technical ol{padding-left:22px;margin:12px 0}
+.message-actions{display:flex;flex-wrap:wrap;gap:20px;margin-top:22px}
+.message-actions button{font-size:12px;min-height:30px;color:inherit}
+.source-label{font-size:10px;margin-top:18px}
+.composer-wrap{padding:16px 0 40px;flex-shrink:0}
+#composer{display:flex;align-items:center;gap:12px;min-height:56px;padding:0 8px 10px 24px;border-bottom:1px solid var(--line);transition:border-color 180ms}
+#composer:focus-within{border-color:var(--text)}
+textarea{width:100%;min-height:32px;max-height:140px;resize:none;background:none;border:0;color:var(--text);font-size:18px;line-height:1.5;padding:3px 0;scrollbar-width:thin}
+textarea::placeholder{color:var(--muted);font-weight:400;opacity:1}
+textarea:placeholder-shown{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#prompt:focus-visible{outline:none}
+.icon-button{display:grid;place-items:center;width:36px;height:36px;flex-shrink:0;font-size:28px}
+.icon-button img{width:24px;height:24px}
+.composer-caption{display:flex;justify-content:space-between;gap:12px;font-size:10px;color:var(--muted);padding:12px 8px 0 24px}
+.connection-note{font-size:12px;padding:10px 24px;color:var(--text)}
+.session-meta,.message-meta,.history-ticket,.ticket-strip,.context-panel dd{font-variant-numeric:tabular-nums}
+
+.context-panel{width:280px;flex-shrink:0;background:var(--sidebar);padding:24px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain}
+.context-panel h2{font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin:0 0 24px}
+.context-panel h3{font-size:11px;text-transform:uppercase;letter-spacing:.08em;margin:32px 0 14px}
+.context-panel p{font-size:13px;color:var(--muted);line-height:1.6}
+.context-panel dl{font-size:12px;margin:0}
+.context-panel dt{color:var(--muted);margin-top:18px}
+.context-panel dd{margin:5px 0 0}
+.badge{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.04em}
+.context-link{display:block;text-align:left;width:100%;padding:20px 0;font-size:13px;line-height:1.6}
+.context-link small{display:block;font-size:11px;color:var(--muted);margin-top:4px}
+
+/* Dialogs keep a line only where an editable field needs a boundary. */
+dialog{background:var(--sidebar);color:var(--text);border:0;padding:30px;width:min(540px,calc(100% - 32px));max-height:85dvh}
+dialog::backdrop{background:color-mix(in srgb,var(--green) 72%,transparent)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:28px}
+.modal-header h2{font:400 28px var(--font-serif);margin:0}
+#modal-content{font-size:14px;line-height:1.6}
+#modal-content p{color:var(--muted)}
+.field{display:block;margin:22px 0}
+.field input,.field select{display:block;width:100%;margin-top:7px;border:0;border-bottom:1px solid var(--line);background:transparent;padding:10px 0;color:var(--text);font-size:14px}
+.field option{background:var(--sidebar);color:var(--text)}
+.primary-button{background:var(--orange);color:var(--selection-text);padding:12px 22px;font-size:14px}
+.file-upload{display:block;padding:18px 0;cursor:pointer;margin:20px 0}
+.file-upload input{display:block;font-size:12px;max-width:100%;margin-top:14px}
+.file-upload input::file-selector-button{font:inherit;background:var(--orange);color:var(--selection-text);border:0;padding:10px 14px;margin-right:12px;cursor:pointer}
+.file-row{display:flex;align-items:center;gap:12px;padding:14px 0}
+.file-row a{color:inherit;overflow-wrap:anywhere;flex:1;text-underline-offset:4px}
+.file-row button{font-size:12px}
+.toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);background:var(--card);color:var(--card-text);padding:14px 24px;font-size:13px;z-index:10;max-width:90%}
+
+/* Only small icon feedback remains; no row hover backgrounds or movement. */
+.icon-button,.circle,.panel-toggle,.context-toggle{transition:opacity 160ms}
+@media(hover:hover){.icon-button:not(:disabled):hover,.circle:hover,.panel-toggle:hover,.context-toggle:hover{opacity:.7}}
+
+/* Welcome and centered composer. */
+main.is-empty .conversation-header{min-height:112px;padding-top:36px;padding-bottom:20px}
+main.is-empty .conversation-header h1{font:400 16px var(--font-sans);letter-spacing:0;color:var(--muted);margin-top:11px}
+main.is-empty .session-meta{padding-top:12px}
+main.is-empty #message-count{display:none}
+.chat.is-empty{justify-content:center;align-items:center;overflow-y:auto;overscroll-behavior:contain;padding-bottom:clamp(24px,14dvh,140px)}
+.chat.is-empty .messages{flex:0 0 auto;width:100%;overflow:visible;padding:0;min-height:auto}
+.welcome-state{width:min(100%,760px);margin:0 auto;text-align:center;padding:24px 16px 28px}
+.welcome-eyebrow{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)}
+.welcome-state h2{font:400 clamp(30px,3.4vw,50px)/1.2 var(--font-serif);letter-spacing:-1.2px;margin:22px 0 18px}
+.welcome-context{font-size:16px;line-height:1.6;color:var(--muted);margin:0 auto;max-width:600px}
+.welcome-weather{margin-top:14px;min-height:24px}
+.welcome-weather button,.welcome-weather a{font-size:12px;color:var(--muted);text-decoration:none;padding:5px 0}
+.weather-error{font-size:12px;color:var(--muted);margin:8px 0 0}
+.chat.is-empty .composer-wrap{width:min(100%,760px);padding:0;flex-shrink:0}
+.chat.is-empty #composer{min-height:70px;padding:12px 12px 12px 24px}
+
+/* Brief transitions, bounded to their containers. */
+.session-enter{animation:session-enter 260ms var(--ease)}
+.message-enter,dialog[open]{animation:message-enter 240ms var(--ease)}
+.message.user.message-enter{animation-name:user-enter}
+dialog[open]::backdrop,.scrim:not([hidden]){animation:fade-in 180ms ease-out}
+.toast:not([hidden]){animation:toast-enter 220ms var(--ease)}
+.loading-message::after{content:'';display:block;width:30px;height:2px;background:currentColor;margin-top:14px;transform-origin:left;animation:loading 1s ease-in-out infinite}
+@keyframes session-enter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes message-enter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes user-enter{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
+@keyframes fade-in{from{opacity:0}to{opacity:1}}
+@keyframes toast-enter{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
+@keyframes loading{0%,100%{transform:scaleX(.35);opacity:.4}50%{transform:scaleX(1);opacity:1}}
+
+@media(min-height:850px){.composer-wrap{padding-bottom:52px}}
+@media(max-width:1200px){
+ :root{--panel-width:clamp(265px,27vw,324px)}
+ .sidebar{padding-left:15px;padding-right:15px}.brand{gap:12px}
+ .conversation-header{padding:44px 23px 32px;min-height:155px}
+ .session-meta{gap:18px;font-size:11px;padding-top:20px}
+ .context-panel{width:245px}.message{font-size:17px}
+ h1{letter-spacing:-1.5px}.context-toggle{margin-left:-8px}
+}
+@media(max-width:900px){
+ .context-panel{position:absolute;right:0;top:135px;bottom:0;width:300px;z-index:3}
+ .session-meta{gap:12px}.session-meta time{display:none}.conversation-header{gap:12px}
+ .message{max-width:94%}.composer-caption{padding-left:10px}#composer{padding-left:10px}
+}
+@media(max-width:650px){
+ .sidebar{position:fixed;left:0;top:0;bottom:0;width:300px;min-width:0;max-width:85vw;z-index:6;margin-left:0;transform:translateX(-100%);padding-bottom:24px;transition:transform var(--motion) var(--ease),visibility var(--motion),background-color var(--motion)}
+ .panel-open .sidebar{margin-left:0;transform:translateX(0)}
+ .scrim{position:fixed;inset:0;z-index:5;background:color-mix(in srgb,var(--green) 65%,transparent)}
+ .conversation-header,.app:not(.panel-open) .conversation-header{min-height:126px;padding:29px 17px 22px 72px;align-items:flex-start;gap:10px;flex-wrap:wrap}
+ .panel-toggle{left:18px;top:27px}
+ h1{font-size:30px;letter-spacing:-1.3px;margin-top:4px}.heading{flex:1}
+ .session-meta{margin-left:auto;padding-top:0;gap:8px;font-size:9px}.context-toggle{margin-left:0;font-size:18px}
+ .chat{padding:0 16px}.message{font-size:15px;min-width:0!important;max-width:94%}
+ .message.user,.message.assistant{padding:17px 20px}.message.technical{font-size:14px}
+ .composer-wrap{padding-bottom:20px}textarea{font-size:14px}
+ .composer-caption{font-size:8px;padding-left:0}.composer-caption>span:last-child{display:none}
+ .context-panel{top:126px;width:min(320px,100%)}.ticket-strip{font-size:9px}
+ main.is-empty .conversation-header{min-height:96px;padding-top:27px}
+ main.is-empty .conversation-header h1{font-size:13px}
+ main.is-empty .session-meta{padding-top:12px}
+ .chat.is-empty{padding-bottom:12dvh}.welcome-state{padding:20px 0 24px}
+ .welcome-state h2{font-size:32px;letter-spacing:-.8px}.welcome-context{font-size:14px}
+ .welcome-eyebrow{font-size:9px;letter-spacing:.09em}
+ .chat.is-empty #composer{padding-left:14px;min-height:62px}
+}
+@media(max-height:560px){.chat.is-empty{justify-content:flex-start;padding-bottom:20px}.welcome-state{padding-top:8px}.welcome-state h2{font-size:28px;margin:12px 0}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
